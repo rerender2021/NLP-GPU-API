@@ -46,17 +46,24 @@ try:
     from fastapi.responses import PlainTextResponse
     from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, pipeline
 
+    import torch
+    print("torch info:")
+    print(torch.__version__)
+    print(torch.version.cuda)
+    print(torch.cuda.is_available())
+
     app = FastAPI(openapi_url=None)
     model_path = os.path.join(abs_model_dir, 'opus-mt-' + params.lang_from + "-" + params.lang_to)
     model = AutoModelForSeq2SeqLM.from_pretrained(model_path)
     tokenizer = AutoTokenizer.from_pretrained(model_path)
     pipeline_name = "translation_" + params.lang_from + "_to_" + params.lang_to
-    translation = pipeline(pipeline_name, model=model, tokenizer=tokenizer)
-
+    # force use gpu
+    translation = pipeline(pipeline_name, model=model, tokenizer=tokenizer, device=0)
+    # trigger the first translation to warm up
+    translation("hello world")
 except Exception as exc:
     log.exception(exc)
     sys.exit(1)
-
 
 @app.on_event('startup')
 async def print_startup_config():
@@ -76,6 +83,11 @@ async def print_startup_config():
 async def pingpong_endpoint():
     return PlainTextResponse('pong')
 
+@app.get('/gpu')
+async def gpu_endpoint():
+    response = {}
+    response["gpu"] = str(torch.cuda.is_available())
+    return response
 
 @app.post('/translate')
 async def ocr_endpoint(
