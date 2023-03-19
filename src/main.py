@@ -29,7 +29,7 @@ parser.set_defaults(host='127.0.0.1', port=8100, lang_from='en', lang_to="zh", m
 params = parser.parse_args()
 
 # init logger
-log = Logger('NLP-API', Logger.INFO)
+log = Logger('NLP-GPU-API', Logger.INFO)
 log.info('NLP API is starting, please wait...')
 
 # init model dir
@@ -38,7 +38,7 @@ if params.model_dir:
     os.makedirs(params.model_dir, exist_ok=True)
     if os.path.isdir(params.model_dir):
         abs_model_dir = os.path.join(os.path.abspath(params.model_dir))
-log.info('NLP-API model dir: %s', abs_model_dir)
+log.info('NLP-GPU-API model dir: %s', abs_model_dir)
 
 # init fastapi & init NLP backend
 try:

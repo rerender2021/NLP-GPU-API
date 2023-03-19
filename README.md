@@ -11,7 +11,7 @@ This is a NLP API server.
 
 # Usage
 
-- Download it from [release](https://github.com/rerender2021/NLP-API/releases)
+- Download it from [release](https://github.com/rerender2021/NLP-GPU-API/releases)
 
 - Unzip it, and click `run.bat`
 
